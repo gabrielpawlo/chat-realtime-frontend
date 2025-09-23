@@ -12,7 +12,7 @@ const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-// ALTERADO: Agora a função recebe um objeto de mensagem
+// CORRIGIDO: A função addMessage agora recebe um objeto de mensagem
 function addMessage(message) {
     const li = document.createElement("li");
     li.textContent = `${message.user}: ${message.text}`;
@@ -20,9 +20,9 @@ function addMessage(message) {
     messagesList.scrollTop = messagesList.scrollHeight;
 }
 
-// Lógica de conexão e mensagens
-connection.on("ReceiveMessage", (message) => {
-    addMessage(message); // message já é { user, text, timestamp }
+// CORRIGIDO: O evento ReceiveMessage agora recebe o objeto completo
+connection.on("ReceiveMessage", (user, message) => {
+    addMessage({ user, text: message });
 });
 
 connection.on("ReceiveMessageHistory", (messages) => {
