@@ -1,0 +1,90 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #f8f9fa;
+    --background-color: #e9ecef;
+    --card-background: #fff;
+    --text-color: #212529;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: var(--text-color);
+    transition: background-color 0.3s ease;
+}
+
+h2 {
+    color: var(--primary-color);
+    text-align: center;
+}
+
+#login-screen, #chat-screen {
+    background-color: var(--card-background);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.hidden {
+    display: none !important;
+}
+
+input[type="text"], button {
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+#messages-container {
+    background-color: var(--secondary-color);
+    border-radius: 8px;
+    height: 400px;
+    padding: 10px;
+    overflow-y: auto;
+}
+
+#messagesList {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+    #messagesList li {
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        background-color: var(--card-background);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+#input-container {
+    display: flex;
+    gap: 10px;
+}
+
+#messageInput {
+    flex-grow: 1;
+}
