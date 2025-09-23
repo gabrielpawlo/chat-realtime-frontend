@@ -25,8 +25,8 @@ connection.on("ReceiveMessageHistory", (messages) => {
     messages.forEach(msg => addMessage(msg)); // Passa o objeto completo
 });
 
-connection.on("ReceiveMessage", (message) => {
-    addMessage(message); // Passa o objeto completo
+connection.on("ReceiveMessage", (user, message) => {
+    addMessage({ user, text: message });
 });
 
 joinButton.addEventListener('click', () => {
