@@ -21,8 +21,8 @@ function addMessage(message) {
 }
 
 // Lógica de conexão e mensagens
-connection.on("ReceiveMessage", (user, message) => {
-    addMessage({ user: user, text: message });
+connection.on("ReceiveMessage", (message) => {
+    addMessage(message); // message já é { user, text, timestamp }
 });
 
 connection.on("ReceiveMessageHistory", (messages) => {
