@@ -12,18 +12,22 @@ const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-// CORRIGIDO: A função addMessage agora recebe um objeto de mensagem
 function addMessage(message) {
+    const user = message.user ?? message.User ?? "???";
+    const text = message.text ?? message.Text ?? "???";
+
     const li = document.createElement("li");
-    li.textContent = `${message.User ?? message.user}: ${message.Text ?? message.text}`;
+    li.textContent = `${user}: ${text}`;
     messagesList.appendChild(li);
     messagesList.scrollTop = messagesList.scrollHeight;
 }
 
 
+
 connection.on("ReceiveMessage", (message) => {
-    addMessage(message); // já é { user, text, timestamp }
+    addMessage(message);
 });
+
 
 
 connection.on("ReceiveMessageHistory", (messages) => {
