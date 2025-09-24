@@ -24,11 +24,12 @@ function addMessage(message) {
 
 
 
-connection.on("ReceiveMessage", function (user, message) {
+connection.on("ReceiveMessage", function (user, text, timestamp) {
     const li = document.createElement("li");
-    li.textContent = `${user}: ${message}`;
+    li.textContent = `${user}: ${text} (${new Date(timestamp).toLocaleTimeString()})`;
     document.getElementById("messagesList").appendChild(li);
 });
+
 
 
 connection.on("ReceiveMessageHistory", (messages) => {
