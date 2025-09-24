@@ -15,10 +15,11 @@ let username = "";
 // CORRIGIDO: A função addMessage agora recebe um objeto de mensagem
 function addMessage(message) {
     const li = document.createElement("li");
-    li.textContent = `${message.user}: ${message.text}`;
+    li.textContent = `${message.User}: ${message.Text}`;
     messagesList.appendChild(li);
     messagesList.scrollTop = messagesList.scrollHeight;
 }
+
 
 connection.on("ReceiveMessage", (message) => {
     addMessage(message); // já é { user, text, timestamp }
