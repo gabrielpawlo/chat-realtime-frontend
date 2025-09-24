@@ -15,7 +15,7 @@ let username = "";
 // CORRIGIDO: A função addMessage agora recebe um objeto de mensagem
 function addMessage(message) {
     const li = document.createElement("li");
-    li.textContent = `${message.User}: ${message.Text}`;
+    li.textContent = `${message.User ?? message.user}: ${message.Text ?? message.text}`;
     messagesList.appendChild(li);
     messagesList.scrollTop = messagesList.scrollHeight;
 }
