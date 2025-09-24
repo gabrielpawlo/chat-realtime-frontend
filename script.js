@@ -20,12 +20,13 @@ function addMessage(message) {
     messagesList.scrollTop = messagesList.scrollHeight;
 }
 
-// CORRIGIDO: O evento ReceiveMessage agora recebe o objeto completo
-connection.on("ReceiveMessage", (user, message) => {
-    addMessage({ user, text: message });
+connection.on("ReceiveMessage", (message) => {
+    addMessage(message); // já é { user, text, timestamp }
 });
 
+
 connection.on("ReceiveMessageHistory", (messages) => {
+    messagesList.innerHTML = ""; // limpa antes de carregar histórico
     messages.forEach(msg => addMessage(msg));
 });
 
