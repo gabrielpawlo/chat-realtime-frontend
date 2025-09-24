@@ -12,29 +12,21 @@ const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
+// CORRIGIDO: A função addMessage agora recebe um objeto de mensagem
 function addMessage(message) {
-    const user = message.user ?? message.User ?? "???";
-    const text = message.text ?? message.Text ?? "???";
-
     const li = document.createElement("li");
-    li.textContent = `${user}: ${text}`;
+    li.textContent = `${message.user}: ${message.text}`;
     messagesList.appendChild(li);
     messagesList.scrollTop = messagesList.scrollHeight;
 }
 
-
-
-connection.on("ReceiveMessage", function (user, text, timestamp) {
-    const li = document.createElement("li");
-    li.textContent = `${user}: ${text} (${new Date(timestamp).toLocaleTimeString()})`;
-    document.getElementById("messagesList").appendChild(li);
+// Lógica de conexão e mensagens
+connection.on("ReceiveMessageHistory", (messages) => {
+    messages.forEach(msg => addMessage(msg)); // Passa o objeto completo
 });
 
-
-
-connection.on("ReceiveMessageHistory", (messages) => {
-    messagesList.innerHTML = ""; // limpa antes de carregar histórico
-    messages.forEach(msg => addMessage(msg));
+connection.on("ReceiveMessage", (message) => {
+    addMessage(message); // Passa o objeto completo
 });
 
 joinButton.addEventListener('click', () => {
