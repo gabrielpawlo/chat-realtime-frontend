@@ -1,6 +1,6 @@
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://chat-realtime-backend-yu5o.onrender.com/chatHub")
-    .build();
+    .withUrl("https://chat-realtime-backend-yu5o.onrender.com/chatHub")
+    .build();
 
 const loginScreen = document.getElementById('login-screen');
 const chatScreen = document.getElementById('chat-screen');
@@ -12,33 +12,32 @@ const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-// CORRIGIDO: A função addMessage agora recebe um objeto de mensagem
+// ALTERADO: Agora a função recebe um objeto de mensagem
 function addMessage(message) {
-const li = document.createElement("li");
-li.textContent = `${message.user}: ${message.text}`;
-messagesList.appendChild(li);
-messagesList.scrollTop = messagesList.scrollHeight;
+    const li = document.createElement("li");
+    li.textContent = `${message.user}: ${message.text}`;
+    messagesList.appendChild(li);
+    messagesList.scrollTop = messagesList.scrollHeight;
 }
 
 // Lógica de conexão e mensagens
 connection.on("ReceiveMessageHistory", (messages) => {
-messages.forEach(msg => addMessage(msg)); // Passa o objeto completo
+    messages.forEach(msg => addMessage(msg)); // Passa o objeto completo
 });
 
-// CORRIGIDO: O evento ReceiveMessage agora recebe o objeto completo
 connection.on("ReceiveMessage", (message) => {
-addMessage(message);
+    addMessage(message); // Passa o objeto completo
 });
 
 joinButton.addEventListener('click', () => {
-username = usernameInput.value.trim();
+    username = usernameInput.value.trim();
     if (username) {
         loginScreen.classList.add('hidden');
         chatScreen.classList.remove('hidden');
         connection.start().catch(err => console.error(err.toString()));
-     } else {
-         alert("Por favor, digite seu nome de usuário.");
- }
+    } else {
+        alert("Por favor, digite seu nome de usuário.");
+    }
 });
 
 function sendMessage() {
