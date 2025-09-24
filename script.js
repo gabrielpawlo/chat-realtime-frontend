@@ -12,7 +12,7 @@ const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-// CORRIGIDO: A função addMessage agora recebe um objeto de mensagem
+// ALTERADO: Agora a função recebe um objeto de mensagem
 function addMessage(message) {
     const li = document.createElement("li");
     li.textContent = `${message.user}: ${message.text}`;
