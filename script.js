@@ -20,14 +20,24 @@ function addMessage(message) {
     messagesList.scrollTop = messagesList.scrollHeight;
 }
 
-// Lógica de conexão e mensagens
-connection.on("ReceiveMessageHistory", (messages) => {
-    messages.forEach(msg => addMessage(msg)); // Passa o objeto completo
+connection.on("ReceiveMessage", (user, text, timestamp) => {
+    const li = document.createElement("li");
+    li.textContent = `${user}: ${text} (${new Date(timestamp).toLocaleTimeString()})`;
+    document.getElementById("messagesList").appendChild(li);
 });
 
-connection.on("ReceiveMessage", (message) => {
-    addMessage(message); // Passa o objeto completo
+
+connection.on("ReceiveMessageHistory", (messages) => {
+    const list = document.getElementById("messagesList");
+    list.innerHTML = ""; // limpa antes
+
+    messages.forEach(m => {
+        const li = document.createElement("li");
+        li.textContent = `${m.user}: ${m.text} (${new Date(m.timestamp).toLocaleTimeString()})`;
+        list.appendChild(li);
+    });
 });
+
 
 joinButton.addEventListener('click', () => {
     username = usernameInput.value.trim();
