@@ -1,32 +1,32 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat em Tempo Real</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
 </head>
 <body>
+    <!-- Tela de login -->
     <div id="login-screen">
         <h2>Seja bem-vindo(a) ao Chat!</h2>
-        <input type="text" id="usernameInput" placeholder="Digite seu nome de usuário">
-        <button id="joinButton">Entrar no Chat</button>
+        <input type="text" id="usernameInput" placeholder="Digite seu nome..." />
+        <button id="enterButton">Entrar no Chat</button>
     </div>
 
-    <div id="chat-screen" class="hidden">
+    <!-- Tela de chat (inicialmente escondida) -->
+    <div id="chat-screen" style="display:none;">
+        <h2>Chat em Tempo Real</h2>
         <div id="messages-container">
             <ul id="messagesList"></ul>
         </div>
         <div id="input-container">
-            <input type="text" id="messageInput" placeholder="Sua mensagem...">
+            <input type="text" id="messageInput" placeholder="Sua mensagem..." />
             <button id="sendButton">Enviar</button>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
