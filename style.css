@@ -90,16 +90,20 @@ button {
 }
 
 #messagesList li {
-    position: relative;
-    padding: 8px 12px;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    background-color: var(--card-background);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: var(--card-background);
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
+    #messagesList li strong {
+        margin-right: 5px;
+        color: var(--primary-color);
+    }
 
     #messagesList li .timestamp {
         font-size: 12px;

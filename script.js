@@ -1,77 +1,75 @@
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://chat-realtime-backend-yu5o.onrender.com/chatHub")
+    .withUrl("https://chat-realtime-backend-yu5o.onrender.com/chatHub") // 🔗 sua API backend
+    .configureLogging(signalR.LogLevel.Information)
     .build();
-
-const loginScreen = document.getElementById('login-screen');
-const chatScreen = document.getElementById('chat-screen');
-const usernameInput = document.getElementById('usernameInput');
-const joinButton = document.getElementById('joinButton');
-const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
-const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-// ALTERADO: Agora a função recebe um objeto de mensagem
-function addMessage(message) {
-    const li = document.createElement("li");
-    li.textContent = `${message.user}: ${message.text}`;
-    messagesList.appendChild(li);
-    messagesList.scrollTop = messagesList.scrollHeight;
-}
-
-connection.on("ReceiveMessage", (user, text, timestamp) => {
-    const li = document.createElement("li");
-    li.textContent = `${user}: ${text} (${new Date(timestamp).toLocaleTimeString()})`;
-    document.getElementById("messagesList").appendChild(li);
-});
-
-
-connection.on("ReceiveMessage", (user, text, timestamp) => {
+// Quando receber mensagem do servidor
+connection.on("ReceiveMessage", (user, message, timestamp) => {
     const li = document.createElement("li");
 
+    // Nome do usuário
     const strong = document.createElement("strong");
     strong.textContent = user + ": ";
 
+    // Mensagem
     const messageSpan = document.createElement("span");
-    messageSpan.textContent = text;
+    messageSpan.textContent = message;
 
+    // Horário formatado
     const timeSpan = document.createElement("span");
     timeSpan.classList.add("timestamp");
-    timeSpan.textContent = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+    const date = new Date(timestamp);
+    timeSpan.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Montagem da mensagem
     li.appendChild(strong);
     li.appendChild(messageSpan);
     li.appendChild(timeSpan);
 
     document.getElementById("messagesList").appendChild(li);
+
+    // Scroll automático
+    const container = document.getElementById("messages-container");
+    container.scrollTop = container.scrollHeight;
 });
 
-
-
-joinButton.addEventListener('click', () => {
-    username = usernameInput.value.trim();
-    if (username) {
-        loginScreen.classList.add('hidden');
-        chatScreen.classList.remove('hidden');
-        connection.start().catch(err => console.error(err.toString()));
-    } else {
-        alert("Por favor, digite seu nome de usuário.");
-    }
-});
-
-function sendMessage() {
-    const message = messageInput.value.trim();
-    if (message) {
-        connection.invoke("SendMessage", username, message).catch(err => console.error(err.toString()));
-        messageInput.value = "";
+// Inicia conexão
+async function start() {
+    try {
+        await connection.start();
+        console.log("Conectado ao SignalR");
+    } catch (err) {
+        console.error("Erro na conexão:", err);
+        setTimeout(start, 5000);
     }
 }
 
-sendButton.addEventListener("click", sendMessage);
+start();
 
-messageInput.addEventListener("keypress", (e) => {
-    if (e.key === 'Enter') {
-        sendMessage();
+// Login
+document.getElementById("loginBtn").addEventListener("click", () => {
+    const inputName = document.getElementById("username").value.trim();
+    if (inputName !== "") {
+        username = inputName;
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("chat-screen").classList.remove("hidden");
+    }
+});
+
+// Enviar mensagem
+document.getElementById("sendButton").addEventListener("click", async (event) => {
+    event.preventDefault();
+
+    const message = document.getElementById("messageInput").value.trim();
+    if (message === "" || !username) return;
+
+    try {
+        await connection.invoke("SendMessage", username, message);
+        document.getElementById("messageInput").value = "";
+    } catch (err) {
+        console.error("Erro ao enviar mensagem:", err);
     }
 });
