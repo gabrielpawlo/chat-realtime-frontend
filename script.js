@@ -27,16 +27,26 @@ connection.on("ReceiveMessage", (user, text, timestamp) => {
 });
 
 
-connection.on("ReceiveMessageHistory", (messages) => {
-    const list = document.getElementById("messagesList");
-    list.innerHTML = ""; // limpa antes
+connection.on("ReceiveMessage", (user, text, timestamp) => {
+    const li = document.createElement("li");
 
-    messages.forEach(m => {
-        const li = document.createElement("li");
-        li.textContent = `${m.user}: ${m.text} (${new Date(m.timestamp).toLocaleTimeString()})`;
-        list.appendChild(li);
-    });
+    const strong = document.createElement("strong");
+    strong.textContent = user + ": ";
+
+    const messageSpan = document.createElement("span");
+    messageSpan.textContent = text;
+
+    const timeSpan = document.createElement("span");
+    timeSpan.classList.add("timestamp");
+    timeSpan.textContent = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    li.appendChild(strong);
+    li.appendChild(messageSpan);
+    li.appendChild(timeSpan);
+
+    document.getElementById("messagesList").appendChild(li);
 });
+
 
 
 joinButton.addEventListener('click', () => {

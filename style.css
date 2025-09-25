@@ -88,3 +88,23 @@ button {
 #messageInput {
     flex-grow: 1;
 }
+
+#messagesList li {
+    position: relative;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background-color: var(--card-background);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+    #messagesList li .timestamp {
+        font-size: 12px;
+        color: #6c757d;
+        margin-left: 10px;
+        white-space: nowrap;
+    }
+
