@@ -69,7 +69,7 @@ function sendMessage() {
 // Eventos de envio de mensagem
 sendButton.addEventListener("click", sendMessage);
 
-// ADICIONADO: Evento para a tecla Enter no campo de mensagem
+// Evento para a tecla Enter no campo de mensagem
 messageInput.addEventListener("keypress", (e) => {
     if (e.key === 'Enter') {
         sendMessage();
