@@ -1,58 +1,74 @@
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://chat-realtime-backend-yu5o.onrender.com/chatHub")
-    .build();
-
-const loginScreen = document.getElementById('login-screen');
-const chatScreen = document.getElementById('chat-screen');
-const usernameInput = document.getElementById('usernameInput');
-const joinButton = document.getElementById('joinButton');
-const messageInput = document.getElementById('messageInput');
-const sendButton = document.getElementById('sendButton');
-const messagesList = document.getElementById('messagesList');
+    .withUrl("https://chat-realtime-backend-yu5o.onrender.com/chatHub") // seu backend
+    .configureLogging(signalR.LogLevel.Information)
+    .build();
 
 let username = "";
 
-// CORRIGIDO: A função addMessage agora recebe um objeto de mensagem
-function addMessage(message) {
-    const li = document.createElement("li");
-    li.textContent = `${message.user}: ${message.text}`;
-    messagesList.appendChild(li);
-    messagesList.scrollTop = messagesList.scrollHeight;
+// Quando clicar em "Entrar no Chat"
+document.getElementById("enterButton").addEventListener("click", () => {
+    const input = document.getElementById("usernameInput").value.trim();
+    if (input === "") {
+        alert("Digite um nome para entrar no chat!");
+        return;
+    }
+
+    username = input;
+
+    // troca as telas
+    document.getElementById("login-screen").style.display = "none";
+    document.getElementById("chat-screen").style.display = "block";
+
+    start(); // conecta ao SignalR
+});
+
+// Receber mensagens
+connection.on("ReceiveMessage", (user, message, timestamp) => {
+    const li = document.createElement("li");
+
+    const strong = document.createElement("strong");
+    strong.textContent = user + ": ";
+
+    const messageSpan = document.createElement("span");
+    messageSpan.textContent = message;
+
+    const timeSpan = document.createElement("span");
+    timeSpan.classList.add("timestamp");
+    const date = new Date(timestamp);
+    timeSpan.textContent = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    li.appendChild(strong);
+    li.appendChild(messageSpan);
+    li.appendChild(timeSpan);
+
+    document.getElementById("messagesList").appendChild(li);
+
+    // scroll automático
+    const container = document.getElementById("messages-container");
+    container.scrollTop = container.scrollHeight;
+});
+
+// Iniciar conexão
+async function start() {
+    try {
+        await connection.start();
+        console.log("Conectado ao SignalR");
+    } catch (err) {
+        console.error("Erro na conexão:", err);
+        setTimeout(start, 5000);
+    }
 }
 
-// Lógica de conexão e mensagens
-connection.on("ReceiveMessageHistory", (messages) => {
-    messages.forEach(msg => addMessage(msg)); // Passa o objeto completo
-});
+// Enviar mensagens
+document.getElementById("sendButton").addEventListener("click", async (event) => {
+    event.preventDefault();
+    const message = document.getElementById("messageInput").value.trim();
+    if (message === "") return;
 
-// CORRIGIDO: O evento ReceiveMessage agora recebe o objeto completo
-connection.on("ReceiveMessage", (message) => {
-    addMessage(message);
-});
-
-joinButton.addEventListener('click', () => {
-    username = usernameInput.value.trim();
-    if (username) {
-        loginScreen.classList.add('hidden');
-        chatScreen.classList.remove('hidden');
-        connection.start().catch(err => console.error(err.toString()));
-    } else {
-        alert("Por favor, digite seu nome de usuário.");
-    }
-});
-
-function sendMessage() {
-    const message = messageInput.value.trim();
-    if (message) {
-        connection.invoke("SendMessage", username, message).catch(err => console.error(err.toString()));
-        messageInput.value = "";
-    }
-}
-
-sendButton.addEventListener("click", sendMessage);
-
-messageInput.addEventListener("keypress", (e) => {
-    if (e.key === 'Enter') {
-        sendMessage();
-    }
+    try {
+        await connection.invoke("SendMessage", username, message);
+        document.getElementById("messageInput").value = "";
+    } catch (err) {
+        console.error("Erro ao enviar:", err);
+    }
 });
