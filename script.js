@@ -12,16 +12,15 @@ const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-// Função para exibir a mensagem na tela
 function addMessage(user, message) {
     const li = document.createElement("li");
     li.textContent = `${user}: ${message}`;
     messagesList.appendChild(li);
-    messagesList.scrollTop = messagesList.scrollHeight; // Rola para o final
+    messagesList.scrollTop = messagesList.scrollHeight;
 }
 
-// Lógica de conexão e mensagens
-connection.on("ReceiveMessage", (user, message, timestamp) => {
+// CORRIGIDO: O evento ReceiveMessage agora recebe os dados da forma correta
+connection.on("ReceiveMessage", (user, message) => {
     addMessage(user, message);
 });
 
@@ -32,7 +31,7 @@ async function start() {
         console.log("Conectado ao SignalR");
     } catch (err) {
         console.error("Erro na conexão:", err);
-        setTimeout(start, 5000); // Tenta reconectar a cada 5 segundos
+        setTimeout(start, 5000);
     }
 }
 
@@ -50,10 +49,9 @@ joinButton.addEventListener("click", () => {
     loginScreen.classList.add("hidden");
     chatScreen.classList.remove("hidden");
 
-    start(); // conecta ao SignalR
+    start();
 });
 
-// Função para enviar mensagens
 function sendMessage() {
     const message = messageInput.value.trim();
     if (message === "") return;
@@ -66,10 +64,8 @@ function sendMessage() {
     }
 }
 
-// Eventos de envio de mensagem
 sendButton.addEventListener("click", sendMessage);
 
-// Evento para a tecla Enter no campo de mensagem
 messageInput.addEventListener("keypress", (e) => {
     if (e.key === 'Enter') {
         sendMessage();
