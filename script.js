@@ -5,7 +5,7 @@ const connection = new signalR.HubConnectionBuilder()
 const loginScreen = document.getElementById('login-screen');
 const chatScreen = document.getElementById('chat-screen');
 const usernameInput = document.getElementById('usernameInput');
-const joinButton = document.getElementById('joinButton');
+const joinButton = document.getElementById('enterButton'); // corrigido aqui
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const messagesList = document.getElementById('messagesList');
@@ -19,12 +19,12 @@ function addMessage(user, message) {
     messagesList.scrollTop = messagesList.scrollHeight;
 }
 
-// CORRIGIDO: O evento ReceiveMessage agora recebe os dados da forma correta
+// Recebendo mensagens do SignalR
 connection.on("ReceiveMessage", (user, message) => {
     addMessage(user, message);
 });
 
-// Lógica de reconexão automática
+// Reconexão automática
 async function start() {
     try {
         await connection.start();
@@ -35,7 +35,7 @@ async function start() {
     }
 }
 
-// Quando clicar em "Entrar no Chat"
+// Entrar no chat
 joinButton.addEventListener("click", () => {
     const input = usernameInput.value.trim();
     if (input === "") {
@@ -45,13 +45,14 @@ joinButton.addEventListener("click", () => {
 
     username = input;
 
-    // troca as telas
-    loginScreen.classList.add("hidden");
-    chatScreen.classList.remove("hidden");
+    // trocar telas
+    loginScreen.style.display = "none";
+    chatScreen.style.display = "block";
 
     start();
 });
 
+// Enviar mensagem
 function sendMessage() {
     const message = messageInput.value.trim();
     if (message === "") return;
