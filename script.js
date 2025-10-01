@@ -5,26 +5,27 @@ const connection = new signalR.HubConnectionBuilder()
 const loginScreen = document.getElementById('login-screen');
 const chatScreen = document.getElementById('chat-screen');
 const usernameInput = document.getElementById('usernameInput');
-const joinButton = document.getElementById('enterButton'); // corrigido aqui
+const joinButton = document.getElementById('joinButton');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-function addMessage(user, message) {
+// ALTERADO: A função agora recebe o timestamp
+function addMessage(user, message, timestamp) {
     const li = document.createElement("li");
-    li.textContent = `${user}: ${message}`;
+    const formattedTime = new Date(timestamp).toLocaleTimeString();
+    li.textContent = `${user} (${formattedTime}): ${message}`;
     messagesList.appendChild(li);
     messagesList.scrollTop = messagesList.scrollHeight;
 }
 
-// Recebendo mensagens do SignalR
-connection.on("ReceiveMessage", (user, message) => {
-    addMessage(user, message);
+connection.on("ReceiveMessage", (user, message, timestamp) => {
+    addMessage(user, message, timestamp);
 });
 
-// Reconexão automática
+// Lógica de reconexão automática
 async function start() {
     try {
         await connection.start();
@@ -35,7 +36,7 @@ async function start() {
     }
 }
 
-// Entrar no chat
+// Quando clicar em "Entrar no Chat"
 joinButton.addEventListener("click", () => {
     const input = usernameInput.value.trim();
     if (input === "") {
@@ -45,14 +46,14 @@ joinButton.addEventListener("click", () => {
 
     username = input;
 
-    // trocar telas
+    // troca as telas
     loginScreen.style.display = "none";
     chatScreen.style.display = "block";
 
     start();
 });
 
-// Enviar mensagem
+// Função para enviar mensagens
 function sendMessage() {
     const message = messageInput.value.trim();
     if (message === "") return;
@@ -65,8 +66,10 @@ function sendMessage() {
     }
 }
 
+// Eventos de envio de mensagem
 sendButton.addEventListener("click", sendMessage);
 
+// Evento para a tecla Enter no campo de mensagem
 messageInput.addEventListener("keypress", (e) => {
     if (e.key === 'Enter') {
         sendMessage();
