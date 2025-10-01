@@ -41,7 +41,6 @@ h2 {
     flex-direction: column;
     gap: 15px;
     transition: transform 0.5s ease-in-out;
-    position: relative;
 }
 
 .hidden {
@@ -99,9 +98,9 @@ button:hover {
 }
 
 .mode-toggle {
-    position: absolute;
-    top: 10px;
-    left: 10px;
+    position: fixed;
+    top: 20px;
+    left: 20px;
     background-color: transparent;
     border: none;
     cursor: pointer;
