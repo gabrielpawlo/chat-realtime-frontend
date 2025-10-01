@@ -12,44 +12,64 @@ const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-// ALTERADO: Agora a função recebe um objeto de mensagem
-function addMessage(message) {
+// Função para exibir a mensagem na tela
+function addMessage(user, message) {
     const li = document.createElement("li");
-    li.textContent = `${message.user}: ${message.text}`;
+    li.textContent = `${user}: ${message}`;
     messagesList.appendChild(li);
-    messagesList.scrollTop = messagesList.scrollHeight;
+    messagesList.scrollTop = messagesList.scrollHeight; // Rola para o final
 }
 
 // Lógica de conexão e mensagens
-connection.on("ReceiveMessageHistory", (messages) => {
-    messages.forEach(msg => addMessage(msg)); // Passa o objeto completo
+connection.on("ReceiveMessage", (user, message, timestamp) => {
+    addMessage(user, message);
 });
 
-connection.on("ReceiveMessage", (message) => {
-    addMessage(message); // Passa o objeto completo
-});
-
-joinButton.addEventListener('click', () => {
-    username = usernameInput.value.trim();
-    if (username) {
-        loginScreen.classList.add('hidden');
-        chatScreen.classList.remove('hidden');
-        connection.start().catch(err => console.error(err.toString()));
-    } else {
-        alert("Por favor, digite seu nome de usuário.");
-    }
-});
-
-function sendMessage() {
-    const message = messageInput.value.trim();
-    if (message) {
-        connection.invoke("SendMessage", username, message).catch(err => console.error(err.toString()));
-        messageInput.value = "";
+// Lógica de reconexão automática
+async function start() {
+    try {
+        await connection.start();
+        console.log("Conectado ao SignalR");
+    } catch (err) {
+        console.error("Erro na conexão:", err);
+        setTimeout(start, 5000); // Tenta reconectar a cada 5 segundos
     }
 }
 
+// Quando clicar em "Entrar no Chat"
+joinButton.addEventListener("click", () => {
+    const input = usernameInput.value.trim();
+    if (input === "") {
+        alert("Digite um nome para entrar no chat!");
+        return;
+    }
+
+    username = input;
+
+    // troca as telas
+    loginScreen.classList.add("hidden");
+    chatScreen.classList.remove("hidden");
+
+    start(); // conecta ao SignalR
+});
+
+// Função para enviar mensagens
+function sendMessage() {
+    const message = messageInput.value.trim();
+    if (message === "") return;
+
+    try {
+        connection.invoke("SendMessage", username, message);
+        messageInput.value = "";
+    } catch (err) {
+        console.error("Erro ao enviar:", err);
+    }
+}
+
+// Eventos de envio de mensagem
 sendButton.addEventListener("click", sendMessage);
 
+// Evento para a tecla Enter no campo de mensagem
 messageInput.addEventListener("keypress", (e) => {
     if (e.key === 'Enter') {
         sendMessage();
