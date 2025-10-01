@@ -12,64 +12,44 @@ const messagesList = document.getElementById('messagesList');
 
 let username = "";
 
-// ALTERADO: A função agora recebe o timestamp
-function addMessage(user, message, timestamp) {
+// ALTERADO: Agora a função recebe um objeto de mensagem
+function addMessage(message) {
     const li = document.createElement("li");
-    const formattedTime = new Date(timestamp).toLocaleTimeString();
-    li.textContent = `${user} (${formattedTime}): ${message}`;
+    li.textContent = `${message.user}: ${message.text}`;
     messagesList.appendChild(li);
     messagesList.scrollTop = messagesList.scrollHeight;
 }
 
-connection.on("ReceiveMessage", (user, message, timestamp) => {
-    addMessage(user, message, timestamp);
+// Lógica de conexão e mensagens
+connection.on("ReceiveMessageHistory", (messages) => {
+    messages.forEach(msg => addMessage(msg)); // Passa o objeto completo
 });
 
-// Lógica de reconexão automática
-async function start() {
-    try {
-        await connection.start();
-        console.log("Conectado ao SignalR");
-    } catch (err) {
-        console.error("Erro na conexão:", err);
-        setTimeout(start, 5000);
-    }
-}
-
-// Quando clicar em "Entrar no Chat"
-joinButton.addEventListener("click", () => {
-    const input = usernameInput.value.trim();
-    if (input === "") {
-        alert("Digite um nome para entrar no chat!");
-        return;
-    }
-
-    username = input;
-
-    // troca as telas
-    loginScreen.style.display = "none";
-    chatScreen.style.display = "block";
-
-    start();
+connection.on("ReceiveMessage", (message) => {
+    addMessage(message); // Passa o objeto completo
 });
 
-// Função para enviar mensagens
+joinButton.addEventListener('click', () => {
+    username = usernameInput.value.trim();
+    if (username) {
+        loginScreen.classList.add('hidden');
+        chatScreen.classList.remove('hidden');
+        connection.start().catch(err => console.error(err.toString()));
+    } else {
+        alert("Por favor, digite seu nome de usuário.");
+    }
+});
+
 function sendMessage() {
     const message = messageInput.value.trim();
-    if (message === "") return;
-
-    try {
-        connection.invoke("SendMessage", username, message);
+    if (message) {
+        connection.invoke("SendMessage", username, message).catch(err => console.error(err.toString()));
         messageInput.value = "";
-    } catch (err) {
-        console.error("Erro ao enviar:", err);
     }
 }
 
-// Eventos de envio de mensagem
 sendButton.addEventListener("click", sendMessage);
 
-// Evento para a tecla Enter no campo de mensagem
 messageInput.addEventListener("keypress", (e) => {
     if (e.key === 'Enter') {
         sendMessage();
