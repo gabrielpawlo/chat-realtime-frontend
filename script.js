@@ -9,6 +9,7 @@ const joinButton = document.getElementById('joinButton');
 const messageInput = document.getElementById('messageInput');
 const sendButton = document.getElementById('sendButton');
 const messagesList = document.getElementById('messagesList');
+const darkModeToggle = document.getElementById('darkModeToggle');
 
 let username = "";
 
@@ -74,4 +75,9 @@ messageInput.addEventListener("keypress", (e) => {
     if (e.key === 'Enter') {
         sendMessage();
     }
+});
+
+// NOVO: Lógica para o modo escuro
+darkModeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
 });
